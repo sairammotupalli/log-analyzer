@@ -242,20 +242,219 @@ node scripts/generate-sample-log.js
 
 ### Vercel + Railway (cloud)
 
-1. **Database**: Create PostgreSQL on [Railway](https://railway.app) or [Supabase](https://supabase.com)
-2. **Backend**: Deploy to Railway, set env vars (DATABASE_URL, JWT_SECRET, ENCRYPTION_KEY, ANTHROPIC_API_KEY)
-3. **Frontend**: Deploy to [Vercel](https://vercel.com), set BACKEND_URL, NEXT_PUBLIC_BACKEND_URL, NEXTAUTH_URL, NEXTAUTH_SECRET, JWT_SECRET
+Deployment Guide (Railway + Vercel)
 
-### Self-Hosted (VPS)
+This project is a monorepo:
 
-```bash
-git clone https://github.com/YOUR_USERNAME/soc-log-analyzer.git
-cd soc-log-analyzer
-cp .env.example .env
-nano .env   # fill in secrets
-docker compose up -d --build
-```
+Backend: packages/backend (Node/TypeScript + Prisma + Postgres)
 
+Frontend: packages/frontend (Next.js + NextAuth)
+
+Production deployment uses:
+
+Backend + Database on Railway
+
+Frontend on Vercel
+
+1) Backend Deployment (Railway)
+1.1 Create Railway Project + Service
+
+Create a new Railway project.
+
+Add a service from GitHub repo.
+
+Set Root Directory to:
+
+packages/backend
+
+Railway will build and deploy the backend.
+
+1.2 Add PostgreSQL (Railway)
+
+In the same Railway project, add PostgreSQL plugin.
+
+Railway will generate a database connection string (DATABASE_URL).
+
+1.3 Backend Environment Variables (Railway)
+
+Go to Railway → Service → Variables, add:
+
+Required:
+
+DATABASE_URL = (Railway Postgres connection string)
+
+JWT_SECRET = long random secret (used by backend if you sign your own JWTs)
+
+Optional / if using Google in backend:
+
+GOOGLE_CLIENT_ID
+
+GOOGLE_CLIENT_SECRET
+
+Generate secrets:
+
+openssl rand -hex 32
+1.4 Prisma / DB migration notes
+
+On deploy, ensure Prisma migrations run (example commands):
+
+prisma generate
+
+prisma db push (or prisma migrate deploy in stricter setups)
+
+1.5 Backend Public URL
+
+After deploy, Railway gives a public URL like:
+
+https://<your-backend>.up.railway.app
+
+You will use this in Vercel as:
+
+NEXT_PUBLIC_BACKEND_URL
+2) Frontend Deployment (Vercel)
+2.1 Import Project
+
+Vercel → New Project → Import GitHub repo
+
+Set Root Directory to:
+
+packages/frontend
+
+Framework: Next.js (auto-detected)
+
+2.2 Frontend Environment Variables (Vercel)
+
+Vercel → Project → Settings → Environment Variables
+
+Required:
+
+NEXT_PUBLIC_BACKEND_URL = https://<your-backend>.up.railway.app
+
+NEXTAUTH_URL = https://<your-frontend>.vercel.app
+
+NEXTAUTH_SECRET = long random secret (NextAuth signing/encryption)
+
+Optional (if using Google login with NextAuth):
+
+GOOGLE_CLIENT_ID
+
+GOOGLE_CLIENT_SECRET
+
+Generate secrets:
+
+openssl rand -hex 32
+Important: Redeploy after env changes
+
+Whenever you change env vars, redeploy on Vercel:
+Vercel → Deployments → Redeploy
+
+3) Google OAuth Setup (NextAuth)
+
+If using Google login:
+
+3.1 Create OAuth Credentials
+
+Google Cloud Console → APIs & Services → Credentials → Create Credentials → OAuth Client ID
+
+3.2 Authorized Origins
+
+Add:
+
+https://<your-frontend>.vercel.app
+3.3 Authorized Redirect URI
+
+Add:
+
+https://<your-frontend>.vercel.app/api/auth/callback/google
+3.4 Add keys to Vercel
+
+Set these in Vercel env vars:
+
+GOOGLE_CLIENT_ID
+
+GOOGLE_CLIENT_SECRET
+
+4) Environment Variable Matching (Local vs Production)
+Local development
+
+Frontend .env.local (example):
+
+NEXT_PUBLIC_BACKEND_URL=http://localhost:4000
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=<random>
+GOOGLE_CLIENT_ID=<optional>
+GOOGLE_CLIENT_SECRET=<optional>
+
+Backend .env (example):
+
+DATABASE_URL=postgresql://...
+JWT_SECRET=<random>
+Production
+
+Frontend on Vercel:
+
+NEXT_PUBLIC_BACKEND_URL=https://<railway-backend>.up.railway.app
+NEXTAUTH_URL=https://<vercel-frontend>.vercel.app
+NEXTAUTH_SECRET=<random>
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+
+Backend on Railway:
+
+DATABASE_URL=<railway postgres>
+JWT_SECRET=<random>
+5) Common Issues & Fixes
+5.1 NextAuth “TypeError: Invalid URL”
+
+Cause: NEXTAUTH_URL missing or not a valid URL (must include https://)
+
+Fix:
+
+Set NEXTAUTH_URL=https://<your-vercel-domain>
+
+Redeploy Vercel
+
+5.2 Works locally but fails on Railway (TypeScript strict errors)
+
+Cause: CI/build in Railway is stricter (e.g., noImplicitAny), or your local build didn’t run pnpm build.
+
+Fix:
+
+Run pnpm build locally in backend and fix TypeScript errors (add proper types or loosen tsconfig if needed)
+
+Commit and redeploy
+
+5.3 Frontend cannot reach backend
+
+Cause: wrong NEXT_PUBLIC_BACKEND_URL or CORS.
+
+Fix:
+
+Ensure NEXT_PUBLIC_BACKEND_URL points to Railway backend public URL
+
+If backend enforces CORS, allow:
+
+https://<your-vercel-domain>.vercel.app
+5.4 Google OAuth redirect mismatch
+
+Cause: Redirect URI in Google Console does not match deployed domain.
+
+Fix:
+
+Update Google Console redirect URI to:
+
+https://<your-vercel-domain>.vercel.app/api/auth/callback/google
+6) Secrets & Security Notes
+
+Do NOT commit .env or .env.local
+
+Commit only .env.example / .env.docker.example
+
+Secrets must be stored in:
+
+Railway Variables (backend)
+
+Vercel Environment Variables (frontend)
 ---
 
 ## Known Limitations

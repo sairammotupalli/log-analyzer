@@ -51,7 +51,7 @@ A full-stack web application for SOC analysts to upload ZScaler Web Proxy log fi
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/YOUR_USERNAME/log-analyzer.git
+git clone https://github.com/sairammotupalli/log-analyzer.git
 cd log-analyzer
 
 # 2. Create environment file

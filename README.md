@@ -57,7 +57,8 @@ cd log-analyzer
 # 2. Create environment file
 cp .env.example .env
 # copy this example to .env file and modify it with your own API keys.
-setup JWT_SECRET(random hex32), LLM API Keys, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET in the .enc
+a. Modify JWT_SECRET(random hex32), LLM API Keys, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET in the .enc
+b. for JWT_SECRET, open terminal and use "openssl rand -hex 32" to generate random hex32 and copy paste in .env file.
 
 # 3. Start all services (Postgres, Ollama, Backend, Frontend)
 docker compose up --build

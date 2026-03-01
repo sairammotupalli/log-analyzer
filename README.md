@@ -146,60 +146,20 @@ Each user configures their own AI provider in **Settings -> LLM Settings**. Sett
 
 ### Using Ollama in Docker
 
-After `docker compose up --build`, configure in LLM Settings:
+In LLM Settings use:
 - **Provider**: Llama / Ollama
 - **Base URL**: `http://ollama:11434`
 - **Model**: `llama3.2`
 
-To change the default Ollama model, edit `docker-compose.yml`:
-```yaml
-x-ollama-model: &ollama-model
-  OLLAMA_MODEL: llama3.2   # change this line
-```
+### Using Ollama in localhost
 
-> **Note**: Llama analyses are faster because anomaly detection is rule-based (no per-anomaly LLM calls). The AI summary uses a compact prompt within local model token limits. Timeline events are not generated for Llama to stay within budget.
-
+In LLM Settings use:
+- **Provider**: Llama / Ollama
+- **Base URL**: `http://localhost:11434/api`
+- **Model**: `llama3.2`
 ---
 
-## Anomaly Detection Rules
-
-All rules are purely rule-based (no per-anomaly LLM calls) for fast, deterministic results.
-
-| Rule | Trigger | Severity |
-|---|---|---|
-| HIGH_REQUEST_RATE | Same IP sends 100+ requests in any 5-minute window | HIGH |
-| REPEATED_BLOCK | Same IP has 10+ blocked requests | HIGH |
-| THREAT_DETECTED | Entry has a non-null threat name (EICAR, malware, etc.) | CRITICAL |
-| HIGH_RISK_SCORE | Risk score > 75 | HIGH |
-| SUSPICIOUS_UA | User agent matches curl/python/wget/scrapy/libwww | MEDIUM |
-| OFF_HOURS_ACCESS | Activity outside 07:00-20:00 with high volume | MEDIUM |
-| LARGE_TRANSFER | Response data size > 50MB | HIGH |
-| MALICIOUS_CATEGORY | Blocked request to security-threat URL category | CRITICAL |
-
----
-
-## API Reference
-
-Base URL: `http://localhost:4000`
-All endpoints require `Authorization: Bearer <jwt>` unless marked public.
-
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | /api/auth/register | Public | Create account |
-| POST | /api/auth/login | Public | Login, returns JWT |
-| GET | /api/auth/me | Yes | Get current user |
-| POST | /api/uploads | Yes | Upload log file |
-| GET | /api/uploads | Yes | List uploads (paginated) |
-| GET | /api/uploads/:id | Yes | Upload + analysis + history + anomalies |
-| DELETE | /api/uploads/:id | Yes | Delete upload and all data |
-| POST | /api/uploads/:id/reanalyze | Yes | Re-run analysis with current LLM |
-| GET | /api/analysis/:id/entries | Yes | Paginated log entries with filter |
-| GET | /api/llm-config | Yes | Get active LLM config |
-| PUT | /api/llm-config | Yes | Save LLM config |
-| DELETE | /api/llm-config/key | Yes | Remove stored API key |
-| POST | /api/llm-config/test | Yes | Test LLM connectivity |
-
----
+**Analysis take upto 1-2 minutes(use API responses for fast response)** 
 
 ## Project Structure
 

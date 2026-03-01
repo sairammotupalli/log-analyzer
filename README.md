@@ -68,7 +68,7 @@ open http://localhost:3000
 Then in the app:
 1. Register an account
 2. Go to **Settings -> LLM Settings** and configure your AI provider
-3. Upload a ZScaler log file from the Dashboard
+3. Upload a sample log file which is in the sample_logs->zscaler_sample.log
 4. Watch the analysis run and explore results
 
 ---

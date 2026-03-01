@@ -1,3 +1,5 @@
+**Live Demo:**: <link>
+
 # SOC Log Analyzer
 
 A full-stack web application for SOC analysts to upload ZScaler Web Proxy log files, detect threats and anomalies, and view AI-generated security summaries in a human-readable dashboard.

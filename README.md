@@ -56,7 +56,8 @@ cd log-analyzer
 
 # 2. Create environment file
 cp .env.example .env
-# Edit .env: set JWT_SECRET and NEXTAUTH_SECRET at minimum
+# copy this example to .env file and modify it with your own API keys.
+setup JWT_SECRET(random hex32), LLM API Keys, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET in the .enc
 
 # 3. Start all services (Postgres, Ollama, Backend, Frontend)
 docker compose up --build
@@ -66,6 +67,7 @@ docker compose up --build
 
 # 5. Open the app
 open http://localhost:3000
+
 ```
 
 Then in the app:

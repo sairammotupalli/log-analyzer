@@ -240,6 +240,10 @@ node scripts/generate-sample-log.js
 
 # 🚀 Deployment Guide (Railway + Vercel)
 
+**Make sure you gave complete access of github to Railway and vercel**
+for Railway: settings -> Account integrations -> access to all repos
+for vercel: settings -> access to all repos
+
 This project is structured as a **monorepo**:
 
 - Backend: `packages/backend` (Node.js + TypeScript + Prisma + PostgreSQL)

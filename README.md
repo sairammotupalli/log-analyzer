@@ -1,5 +1,5 @@
 **Live Demo:** <link>
-**Video Explanation**:<link>
+**Video Explanation**:<lin>
 
 # SOC Log Analyzer
 

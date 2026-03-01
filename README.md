@@ -98,7 +98,7 @@ pnpm dev
 
 ---
 
-## Environment Variables
+## Environment Variables (Mandatory)
 
 Copy `.env.example` to `.env` and fill in the values.
 

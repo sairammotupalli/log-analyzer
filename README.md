@@ -1,4 +1,4 @@
-**Live Demo:** <link>
+
 **Video Explanation**:<lin>
 
 # Log Analyzer

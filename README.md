@@ -1,4 +1,4 @@
-**Live Demo:**: <link>
+**Live Demo:** <link>
 
 # SOC Log Analyzer
 
